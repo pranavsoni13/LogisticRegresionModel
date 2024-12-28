@@ -41,6 +41,27 @@ print("\nConfusion Matrix:\n", conf_matrix)
 accuracy = accuracy_score(y_test, predictions)
 print("\nAccuracy:", accuracy)
 
+#Print the coefficients of the logistic regression model
+
+print("\nModel Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
+
+#Sigmoid function & sample input
+w=model.coef_[0][0]
+b=model.intercept_[0]
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+def predict_probability(customer_age):
+    z = w * customer_age + b
+    probability = sigmoid(z)
+    return probability
+print("\n",df.sample(),"\n")
+age_to_predict=int(input("Enter the age to predict the purchase probability: "))
+probability=predict_probability(age_to_predict)
+print(probability)
+
+print("\n")
+
 # Plot the scatterplot of the data
 plt.figure(figsize=(8, 6))
 plt.scatter(df['Customer_Age'], df['Purchase_Decision'], alpha=0.7, label='Data Points')
@@ -57,7 +78,3 @@ plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.show()
-
-#Print the coefficients of the logistic regression model
-print("\nModel Coefficients:\n", model.coef_)
-print("Intercept:", model.intercept_)
