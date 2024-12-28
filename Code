@@ -1,0 +1,63 @@
+# Importing the Libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.preprocessing import StandardScaler
+
+# Load the dataset
+df = pd.read_csv('business_logistic_regression_dataset.csv')
+
+# Check for missing values
+print("Missing values:\n", df.isnull().sum())
+
+# Extract features and target
+X = df[['Customer_Age']]
+y = df['Purchase_Decision']
+
+# Standardize the feature
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Split the data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=59)
+
+# Train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+predictions = model.predict(X_test)
+probabilities = model.predict_proba(X_test)[:, 1]
+
+# Evaluate the model
+print("\nClassification Report:\n", classification_report(y_test, predictions))
+conf_matrix = confusion_matrix(y_test, predictions)
+print("\nConfusion Matrix:\n", conf_matrix)
+
+accuracy = accuracy_score(y_test, predictions)
+print("\nAccuracy:", accuracy)
+
+# Plot the scatterplot of the data
+plt.figure(figsize=(8, 6))
+plt.scatter(df['Customer_Age'], df['Purchase_Decision'], alpha=0.7, label='Data Points')
+plt.xlabel('Customer Age')
+plt.ylabel('Purchase Decision')
+plt.title('Customer Age vs. Purchase Decision')
+plt.legend()
+plt.show()
+print('\n')
+# Plot the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['No Purchase', 'Purchase'], yticklabels=['No Purchase', 'Purchase'])
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.show()
+
+#Print the coefficients of the logistic regression model
+print("\nModel Coefficients:\n", model.coef_)
+print("Intercept:", model.intercept_)
